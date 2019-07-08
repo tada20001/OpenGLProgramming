@@ -1,22 +1,38 @@
 #include <iostream>
 #include "Vector2D.h"
 #include "Vector3D.h"
+#include "Matrix3X3.h"
 
 int main()
 {
-	Vector3D<float> v0, v1;
+	// extend Vector2D to Vector 3D
+	// implement crossproduct between two vector
+	/*{
+		Vector3D<float> v0(1, 0, 0), v1(0, 1, 0);
 
-	v0.x_ = 1.0f;
-	v0.y_ = 0.0f;
-	v0.z_ = 0.0f;
+		for (int d = 0; d < 3; d++)
+			std::cout << crossProduct(v0, v1).values_[d] << " ";
+		std::cout << std::endl;
+	}*/
+	
+	// add Matrix 3 by 3
+	{
+		Matrix3X3 m;
 
-	v1.x_ = 0.0f;
-	v1.y_ = 1.0f;
-	v1.z_ = 0.0f;
+		float input_value = 0.0f;
 
-	for (int d = 0; d < 3; d++)
-		std::cout << crossProduct(v0, v1).values_[d] << " ";
-	std::cout << std::endl;
+		for (int row = 0; row < 3; row++)
+		{
+			for (int col = 0; col < 3; col++)
+			{
+				m.value_[row][col] = input_value;
+				++input_value;
+			}
+		}
+
+		m.print();
+
+	}
 
 	return 0;
 }
