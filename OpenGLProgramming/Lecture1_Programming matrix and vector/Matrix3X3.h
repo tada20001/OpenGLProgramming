@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector3D.h"
+#include <iostream>
 
 class Matrix3X3
 {
