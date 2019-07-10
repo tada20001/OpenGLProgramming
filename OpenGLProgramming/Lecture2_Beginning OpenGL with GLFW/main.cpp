@@ -191,7 +191,7 @@ int main(void)
 
 		glDrawArrays(GL_TRIANGLES, 0, 6 * 3);
 
-		// connectivity information between vertices 
+		// send connectivity information between vertices 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0);
 
