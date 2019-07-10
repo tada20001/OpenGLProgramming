@@ -115,27 +115,33 @@ int main(void)
 	glOrtho((double)-1 * aspect_ratio, (double)1 * aspect_ratio, -1, 1, -1.0, 1.0);
 
 
-	const Vector3D color[3] = {
+	const Vector3D color[6] = {
 						Vector3D(1.0, 0.0, 0.0),
 						Vector3D(0.0, 1.0, 0.0),
-						Vector3D(0.0, 0.0, 1.0) };
+						Vector3D(0.0, 0.0, 1.0),
+						Vector3D(0.0, 0.0, 1.0),
+						Vector3D(0.0, 1.0, 0.0),
+						Vector3D(1.0, 0.0, 0.0) };
 
-	const Vector3D vertex[3] = {
-						Vector3D{ 0.0, 0.0, 0.0 },  // first vertex
-						Vector3D{0.5, 0.0, 0.0},	// second vertex
-						Vector3D{0.25, 0.5, 0.0} };	// third vectex
+	const Vector3D vertex[6] = {
+						Vector3D{ 0.0, 0.0, 0.0 },  
+						Vector3D{ 0.5, 0.0, 0.0 },	
+						Vector3D{ 0.25, 0.5, 0.0 },
+						Vector3D{ 0.25, 0.5, 0.0 },
+						Vector3D{ 0.5, 0.0, 0.0 },
+						Vector3D{ 0.5, 0.5, 0.0 }};	
 	
-	int num_vertices = 3;
+	int num_vertices = 6;
 
 	GLuint vbo[3];  // unsigned array pointer of GPU memory, same as float* my_array[3];
 
 	glGenBuffers(3, vbo);  // 3: 3-array
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);  // bind to the buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_vertices * 3, color, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_vertices * sizeof(Vector3D), color, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_vertices * 3, vertex, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 3, vertex, GL_STATIC_DRAW);
 
 	/*glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLubyte) * 3, indices, GL_STATIC_DRAW);*/
@@ -184,7 +190,7 @@ int main(void)
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, 0, 0);
 
-		glDrawArrays(GL_TRIANGLES, 0, 9);
+		glDrawArrays(GL_TRIANGLES, 0, 6 * 3);
 
 		/*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]);
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, 0);*/
