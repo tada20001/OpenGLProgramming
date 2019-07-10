@@ -65,6 +65,7 @@ int main(void)
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
+	glOrtho(-1, 1, -1, 1, -1.0, 1.0);
 
 	// Loop until the user closes the window
 	while (!glfwWindowShouldClose(window))
@@ -74,11 +75,32 @@ int main(void)
 
 		//TODO: draw here
 		// Note: this is an old-style OpenGL
-		glBegin(GL_TRIANGLES);
+		glBegin(GL_TRIANGLE_FAN);
 		glColor3f(1.0, 0.0, 0.0);  // red
-		glVertex3f(0.0, 0.0, 0.0);  // it is equivalent to glVertex2f(0.0, 0.0) in 2D drawing
-		glVertex3f(0.5, 0.0, 0.0);
-		glVertex3f(0.25, 0.5, 0.0);
+		//glVertex3f(0.0, 0.0, 0.0);  // it is equivalent to glVertex2f(0.0, 0.0) in 2D drawing
+		//
+		//glColor3f(0.0, 1.0, 0.0);
+		//glVertex3f(0.5, 0.0, 0.0);
+
+		//glColor3f(0.0, 0.0, 1.0);
+		//glVertex3f(0.25, 0.5, 0.0);
+
+		// center of polygonized circle
+		glVertex2f(0.0, 0.0);
+
+		const int num_triangles = 1000;
+		const float dtheta = 2.0 * 3.141592 / (float)num_triangles;
+		const float radius = 0.5f;
+
+		float theta = 0.0f;
+		for(int i=0; i <= num_triangles; i++, theta += dtheta)
+		for(float theta = 0.0; theta < 2.0 * 3.141592; theta+= dtheta)
+		{
+			const float x = radius * cos(theta);
+			const float y = radius * sin(theta);
+
+			glVertex2f(x, y);
+		}
 		glEnd();
 
 		// Swap front and back buffers
