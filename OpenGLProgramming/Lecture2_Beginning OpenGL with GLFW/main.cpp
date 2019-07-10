@@ -9,6 +9,7 @@
 #include <map>
 #include "Vector3D.h"
 #include <vector>
+#include <GL/GLU.h>
 
 const int width_window = 640;
 const int height_window = 480;
@@ -87,7 +88,6 @@ int main(void)
 	//glfwSetKeyCallback(window, key_callback);
 	//glfwSetCursorPosCallback(window, cursor_position_callback);
 
-
 	// Make the window's context current
 	glfwMakeContextCurrent(window);
 
@@ -101,18 +101,19 @@ int main(void)
 		return -1;
 	}
 
-
 	printf("%s\n", glGetString(GL_VERSION));
 
-
+	// default color for display buffer
 	glClearColor(174.0/255.0, 95.0/255.0, 95.0 / 255.0, 1);   
 	//glClearColor(1, 1, 1, 1); // white background
-	
+
+	gluLookAt(0.6, 0.6, 0.6, 0.5, 0.5, 0.5, 0, 1, 0);  // it requires 9 parameters for 3-Dimension
+
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
 	const float aspect_ratio = (float)width / (float)height;  // 1.66, 1.9 TV display
-	glOrtho((double)-1 * aspect_ratio, (double)1 * aspect_ratio, -1, 1, -1.0, 1.0);
+	glOrtho((double)-1 * aspect_ratio, (double)1 * aspect_ratio, -1, 1, -10.0, 10.0);
 
 
 	const Vector3D color[4] = {
@@ -126,7 +127,7 @@ int main(void)
 						Vector3D{ 0.0, 0.0, 0.0 },  
 						Vector3D{ 0.5, 0.0, 0.0 },	
 						Vector3D{ 0.25, 0.5, 0.0 },
-						Vector3D{ 0.5, 0.5, 0.0 }};	
+						Vector3D{ 0.5, 0.5, -0.5 }};	
 	
 	GLubyte indices[] = { 0, 1, 2, 1, 2, 3 };  // multiple triangle by using less vertices, in the field of topology theory
 
