@@ -8,6 +8,7 @@
 #include <cmath>
 #include <map>
 #include "Vector3D.h"
+#include <vector>
 
 const int width_window = 640;
 const int height_window = 480;
@@ -90,6 +91,17 @@ int main(void)
 	// Make the window's context current
 	glfwMakeContextCurrent(window);
 
+	// Initialize GLEW  to allocate memory in GPU, should paste this function after context current
+	glewExperimental = true;  // Needed for core profile
+	if (glewInit() != GLEW_OK)
+	{
+		fprintf(stderr, "Failed to initialize GLEW\n");
+		getchar();
+		glfwTerminate();
+		return -1;
+	}
+
+
 	printf("%s\n", glGetString(GL_VERSION));
 
 
@@ -113,6 +125,20 @@ int main(void)
 						Vector3D{0.5, 0.0, 0.0},	// second vertex
 						Vector3D{0.25, 0.5, 0.0} };	// third vectex
 	
+	int num_vertices = 3;
+
+	GLuint vbo[3];  // unsigned array pointer of GPU memory, same as float* my_array[3];
+
+	glGenBuffers(3, vbo);  // 3: 3-array
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);  // bind to the buffer
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_vertices * 3, color, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_vertices * 3, vertex, GL_STATIC_DRAW);
+
+	/*glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLubyte) * 3, indices, GL_STATIC_DRAW);*/
 
 	// Loop until the user closes the window
 	while (!glfwWindowShouldClose(window))
@@ -124,32 +150,49 @@ int main(void)
 		// Note: this is an old-style OpenGL
 		// In this example, we draw only one triangle
 		// this is for massive polygons
-		glBegin(GL_TRIANGLES);
+		//glBegin(GL_TRIANGLES);
 
-		for (int v = 0; v < 3; v++)
-		{
-			glColor3f(color[v].r_, color[v].g_, color[v].b_);
-			//glColor3fv(color[v].data);
-			glVertex3f(vertex[v].x_, vertex[v].y_, vertex[v].z_);
-		}
+		//for (int v = 0; v < 3; v++)
+		//{
+		//	glColor3f(color[v].r_, color[v].g_, color[v].b_);
+		//	//glColor3fv(color[v].data);
+		//	glVertex3f(vertex[v].x_, vertex[v].y_, vertex[v].z_);
+		//}
+		//glEnd();
 
-		// center of polygonized circle
-		/*glVertex2f(circle_center_x, circle_center_y);
+		// Modern c++ style : save time to send data from GPU to CPU
+		// 1. set my_array
+		//glEnableClientState(GL_COLOR_ARRAY);  
+		//glEnableClientState(GL_VERTEX_ARRAY);
+		//
+		//// 2. set the pointer of my_array
+		//glColorPointer(3, GL_FLOAT, 0, color);  
+		//glVertexPointer(3, GL_FLOAT, 0, vertex);
+		//// 3. draw array
+		//glDrawArrays(GL_TRIANGLES, 0, 9);  
 
-		const int num_triangles = 1000;
-		const float dtheta = 2.0 * 3.141592 / (float)num_triangles;
-		const float radius = 0.5f;
+		/*glDisableClientState(GL_COLOR_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);*/
 
-		float theta = 0.0f;
-		for(int i=0; i <= num_triangles; i++, theta += dtheta)
-		for(float theta = 0.0; theta < 2.0 * 3.141592; theta+= dtheta)
-		{
-			const float x = radius * cos(theta) + circle_center_x;
-			const float y = radius * sin(theta) + circle_center_y;
+		// draw with glew function
 
-			glVertex2f(x, y);
-		}*/
-		glEnd();
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+		glEnableClientState(GL_COLOR_ARRAY);
+		glColorPointer(3, GL_FLOAT, 0, 0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_FLOAT, 0, 0);
+
+		glDrawArrays(GL_TRIANGLES, 0, 9);
+
+		/*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]);
+		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, 0);*/
+
+		glDisableClientState(GL_COLOR_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		
 
 		// Swap front and back buffers
 		glfwSwapBuffers(window);
