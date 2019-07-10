@@ -65,7 +65,8 @@ int main(void)
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
-	glOrtho(-1, 1, -1, 1, -1.0, 1.0);
+	const float aspect_ratio = (float)width / (float)height;  // 1.66, 1.9 TV display
+	glOrtho((double)-1 * aspect_ratio, (double)1 * aspect_ratio, -1, 1, -1.0, 1.0);
 
 	// Loop until the user closes the window
 	while (!glfwWindowShouldClose(window))
