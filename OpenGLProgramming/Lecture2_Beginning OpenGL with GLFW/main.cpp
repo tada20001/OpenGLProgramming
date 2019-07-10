@@ -7,6 +7,7 @@
 #include <iostream>
 #include <cmath>
 #include <map>
+#include "Vector3D.h"
 
 const int width_window = 640;
 const int height_window = 480;
@@ -82,21 +83,36 @@ int main(void)
 	}
 
 	// callbacks here
-	glfwSetKeyCallback(window, key_callback);
-	glfwSetCursorPosCallback(window, cursor_position_callback);
+	//glfwSetKeyCallback(window, key_callback);
+	//glfwSetCursorPosCallback(window, cursor_position_callback);
 
-	
 
 	// Make the window's context current
 	glfwMakeContextCurrent(window);
-	//glClearColor(174.0/255.0, 95.0/255.0, 95.0 / 255.0, 1);   
-	glClearColor(1, 1, 1, 1); // white background
+
+	printf("%s\n", glGetString(GL_VERSION));
+
+
+	glClearColor(174.0/255.0, 95.0/255.0, 95.0 / 255.0, 1);   
+	//glClearColor(1, 1, 1, 1); // white background
 	
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
 	const float aspect_ratio = (float)width / (float)height;  // 1.66, 1.9 TV display
 	glOrtho((double)-1 * aspect_ratio, (double)1 * aspect_ratio, -1, 1, -1.0, 1.0);
+
+
+	const Vector3D color[3] = {
+						Vector3D(1.0, 0.0, 0.0),
+						Vector3D(0.0, 1.0, 0.0),
+						Vector3D(0.0, 0.0, 1.0) };
+
+	const Vector3D vertex[3] = {
+						Vector3D{ 0.0, 0.0, 0.0 },  // first vertex
+						Vector3D{0.5, 0.0, 0.0},	// second vertex
+						Vector3D{0.25, 0.5, 0.0} };	// third vectex
+	
 
 	// Loop until the user closes the window
 	while (!glfwWindowShouldClose(window))
@@ -106,18 +122,19 @@ int main(void)
 
 		//TODO: draw here
 		// Note: this is an old-style OpenGL
-		glBegin(GL_TRIANGLE_FAN);
-		glColor3f(1.0, 0.0, 0.0);  // red
-		//glVertex3f(0.0, 0.0, 0.0);  // it is equivalent to glVertex2f(0.0, 0.0) in 2D drawing
-		//
-		//glColor3f(0.0, 1.0, 0.0);
-		//glVertex3f(0.5, 0.0, 0.0);
+		// In this example, we draw only one triangle
+		// this is for massive polygons
+		glBegin(GL_TRIANGLES);
 
-		//glColor3f(0.0, 0.0, 1.0);
-		//glVertex3f(0.25, 0.5, 0.0);
+		for (int v = 0; v < 3; v++)
+		{
+			glColor3f(color[v].r_, color[v].g_, color[v].b_);
+			//glColor3fv(color[v].data);
+			glVertex3f(vertex[v].x_, vertex[v].y_, vertex[v].z_);
+		}
 
 		// center of polygonized circle
-		glVertex2f(circle_center_x, circle_center_y);
+		/*glVertex2f(circle_center_x, circle_center_y);
 
 		const int num_triangles = 1000;
 		const float dtheta = 2.0 * 3.141592 / (float)num_triangles;
@@ -131,7 +148,7 @@ int main(void)
 			const float y = radius * sin(theta) + circle_center_y;
 
 			glVertex2f(x, y);
-		}
+		}*/
 		glEnd();
 
 		// Swap front and back buffers
