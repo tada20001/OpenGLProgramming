@@ -115,23 +115,22 @@ int main(void)
 	glOrtho((double)-1 * aspect_ratio, (double)1 * aspect_ratio, -1, 1, -1.0, 1.0);
 
 
-	const Vector3D color[6] = {
+	const Vector3D color[4] = {
 						Vector3D(1.0, 0.0, 0.0),
 						Vector3D(0.0, 1.0, 0.0),
 						Vector3D(0.0, 0.0, 1.0),
 						Vector3D(0.0, 0.0, 1.0),
-						Vector3D(0.0, 1.0, 0.0),
-						Vector3D(1.0, 0.0, 0.0) };
+						};
 
-	const Vector3D vertex[6] = {
+	const Vector3D vertex[4] = {
 						Vector3D{ 0.0, 0.0, 0.0 },  
 						Vector3D{ 0.5, 0.0, 0.0 },	
 						Vector3D{ 0.25, 0.5, 0.0 },
-						Vector3D{ 0.25, 0.5, 0.0 },
-						Vector3D{ 0.5, 0.0, 0.0 },
 						Vector3D{ 0.5, 0.5, 0.0 }};	
 	
-	int num_vertices = 6;
+	GLubyte indices[] = { 0, 1, 2, 1, 2, 3 };  // multiple triangle by using less vertices, in the field of topology theory
+
+	int num_vertices = 4;
 
 	GLuint vbo[3];  // unsigned array pointer of GPU memory, same as float* my_array[3];
 
@@ -143,8 +142,8 @@ int main(void)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 3, vertex, GL_STATIC_DRAW);
 
-	/*glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLubyte) * 3, indices, GL_STATIC_DRAW);*/
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLubyte) * 6, indices, GL_STATIC_DRAW);  // 6: the number of indices
 
 	// Loop until the user closes the window
 	while (!glfwWindowShouldClose(window))
@@ -192,8 +191,9 @@ int main(void)
 
 		glDrawArrays(GL_TRIANGLES, 0, 6 * 3);
 
-		/*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]);
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, 0);*/
+		// connectivity information between vertices 
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0);
 
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
