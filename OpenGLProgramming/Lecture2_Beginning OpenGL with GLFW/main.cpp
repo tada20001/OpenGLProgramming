@@ -91,7 +91,8 @@ const GLbyte indices[num_quads * 4] = {
 
 void moveBox()
 {
-	const float dx = -0.01;
+	// translation
+	/*const float dx = -0.01;
 	const float dy = 0.0;
 	const float dz = 0.0;
 
@@ -99,7 +100,22 @@ void moveBox()
 	tr.setRow(0, 1, 0, 0, dx);
 	tr.setRow(1, 0, 1, 0, dy);
 	tr.setRow(2, 0, 0, 1, dz);
-	tr.setRow(3, 0, 0, 0, 1);
+	tr.setRow(3, 0, 0, 0, 1);*/
+
+	const float theta = 1.0 / 360.0 * 2.0 * 3.141592;  // degree * 2 * pi : 1 degree in radian
+
+	Matrix4<float> rot;
+	// rotation about x-axis
+	rot.setRow(0, 1, 0, 0, 0.0);
+	rot.setRow(1, 0, cos(theta), -sin(theta), 0.0);
+	rot.setRow(2, 0, sin(theta), cos(theta), 0.0);
+	rot.setRow(3, 0, 0, 0, 1);
+
+	// rotation about y-axis
+	rot.setRow(0, cos(theta), 0, sin(theta), 0.0);
+	rot.setRow(1, 0, 1, 0, 0.0);
+	rot.setRow(2, -sin(theta), 0, cos(theta), 0.0);
+	rot.setRow(3, 0, 0, 0, 1);
 
 	for (int v = 0; v < num_vertices; v++)
 	{
@@ -108,7 +124,7 @@ void moveBox()
 		positions[v].z_ += dz;*/
 
 		Vector4D<float> temp = positions[v];
-		tr.multiply(temp, positions[v]);
+		rot.multiply(temp, positions[v]);
 	}
 }
 
@@ -169,7 +185,7 @@ int main(void)
 	//glBindVertexArray(VertexArrayID);
 	
 	const Vector3D colors[6] = {
-						Vector3D(1.0, 0.0, 0.0),
+						Vector3D(0.0, 1.0, 0.0),
 						Vector3D(0.0, 1.0, 0.0),
 						Vector3D(0.0, 1.0, 0.0),
 						Vector3D(0.0, 1.0, 0.0),
