@@ -98,6 +98,20 @@ const unsigned int indices[num_quads * 4] = {
 	20, 21, 22, 23,
 };
 
+const char* vertex_shader =
+"#version 330\n"
+"in vec3 a_pos;"   // "in" means the input to your vertex shader
+"void main() {"
+"				gl_Position = vec4(a_pos, 1.0);"  // determin position vertices and convert vec3 into vec4(XYZ and W)
+"};";
+
+const char* fragment_shader =  // fragment shader determines color data
+"#version 330\n"   // OpenGL 3.3
+"out vec4 f_color;"  
+"void main() {"
+"				f_color = vec4(1.0, 0.0, 0.0, 1.0);"
+"}";
+
 void moveBox()
 {
 	// translation
@@ -264,7 +278,7 @@ int main(void)
 		// draw with glew function : default shading, send data to GPU
 
 		glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_VERTEX_ARRAY);  // send positions vertex data to GPU
 		glVertexPointer(3, GL_FLOAT, 0, 0);  // Vector3D
 
 		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
@@ -278,6 +292,7 @@ int main(void)
 
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
+
 
 		// Swap front and back buffers
 		glfwSwapBuffers(window);
