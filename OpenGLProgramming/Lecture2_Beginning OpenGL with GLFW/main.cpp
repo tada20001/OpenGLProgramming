@@ -99,57 +99,19 @@ const unsigned int indices[num_quads * 4] = {
 };
 
 const char* vertex_shader =
-"#version 330\n"
+"#version 400\n"
 "in vec3 a_pos;"   // "in" means the input to your vertex shader
 "void main() {"
 "				gl_Position = vec4(a_pos, 1.0);"  // determin position vertices and convert vec3 into vec4(XYZ and W)
-"};";
+			"}";
 
 const char* fragment_shader =  // fragment shader determines color data
-"#version 330\n"   // OpenGL 3.3
+"#version 400\n"   // OpenGL 4.0.0
 "out vec4 f_color;"  
 "void main() {"
-"				f_color = vec4(1.0, 0.0, 0.0, 1.0);"
-"}";
+"				f_color = vec4(1.0, 0.0, 0.0, 1.0);"   // red
+			"}";
 
-void moveBox()
-{
-	// translation
-	/*const float dx = -0.01;
-	const float dy = 0.0;
-	const float dz = 0.0;
-
-	Matrix4<float> tr;
-	tr.setRow(0, 1, 0, 0, dx);
-	tr.setRow(1, 0, 1, 0, dy);
-	tr.setRow(2, 0, 0, 1, dz);
-	tr.setRow(3, 0, 0, 0, 1);*/
-
-	const float theta = 1.0 / 360.0 * 2.0 * 3.141592;  // degree * 2 * pi : 1 degree in radian
-
-	//Matrix4<float> rot;
-	// rotation about x-axis
-	//rot.setRow(0, 1, 0, 0, 0.0);
-	//rot.setRow(1, 0, cos(theta), -sin(theta), 0.0);
-	//rot.setRow(2, 0, sin(theta), cos(theta), 0.0);
-	//rot.setRow(3, 0, 0, 0, 1);
-
-	// rotation about y-axis
-	//rot.setRow(0, cos(theta), 0, sin(theta), 0.0);
-	//rot.setRow(1, 0, 1, 0, 0.0);
-	//rot.setRow(2, -sin(theta), 0, cos(theta), 0.0);
-	//rot.setRow(3, 0, 0, 0, 1);
-
-	//for (int v = 0; v < num_vertices; v++)
-	//{
-	//	/*positions[v].x_ += dx;
-	//	positions[v].y_ += dy;
-	//	positions[v].z_ += dz;*/
-
-	//	Vector4D<float> temp = positions[v];
-	//	rot.multiply(temp, positions[v]);
-	//}
-}
 
 int main(void)
 {
@@ -193,10 +155,7 @@ int main(void)
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
-	//const float aspect_ratio = (float)width / (float)height;  // 1.66, 1.9 TV display
-	//glOrtho((double)-1 * aspect_ratio, (double)1 * aspect_ratio, -1, 1, -10.0, 10.0);
 	glOrtho(-1.2, 1.2, -1.2, 1.2, -10.0, 10.0);
-	// TODO: consider anisotropic view
 	gluLookAt(1.2, 0.8, 1.2, 0.5, 0.5, 0.5, 0, 1, 0);  // it requires 9 parameters for 3-Dimension
 	
 	//glLoadIdentity();
@@ -207,91 +166,103 @@ int main(void)
 	//glGenVertexArrays(1, &VertexArrayID);
 	//glBindVertexArray(VertexArrayID);
 	
-	/*const Vector3D colors[6] = {
-						Vector3D(0.0, 1.0, 0.0),
-						Vector3D(0.0, 1.0, 0.0),
-						Vector3D(0.0, 1.0, 0.0),
-						Vector3D(0.0, 1.0, 0.0),
-						Vector3D(0.0, 1.0, 0.0),
-						Vector3D(0.0, 1.0, 0.0),
-						};*/
-	
 	GLuint vbo[3];  // unsigned array pointer of GPU memory, same as float* my_array[3];
-
 	glGenBuffers(3, vbo);  // 3: 3-array
-
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);  // bind to the buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
-
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);  // 6: the number of indices
+	glBufferData(GL_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);  
 
-	// NOTE: don't forget glDeleteBuffersARB(1, &vbo);
+	 //NOTE: don't forget glDeleteBuffersARB(1, &vbo);
 
 	// depth test
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
+	// Initialize shader programme
+	GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vs, 1, &vertex_shader, NULL);
+	glCompileShader(vs);
+	GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fs, 1, &fragment_shader, NULL);
+	glCompileShader(fs);
+
+	GLuint shader_programme = glCreateProgram();
+	glAttachShader(shader_programme, fs);
+	glAttachShader(shader_programme, vs);
+	glBindAttribLocation(shader_programme, 0, "a_pos");
+	glLinkProgram(shader_programme);
+
+	// check the link status
+	GLint linked = 0;
+	glGetProgramiv(shader_programme, GL_LINK_STATUS, &linked);
+	if (!linked)
+	{
+		GLint infoLen = 0;
+
+		glGetProgramiv(shader_programme, GL_INFO_LOG_LENGTH, &infoLen);
+
+		if (infoLen > 1)
+		{
+			char* infoLog = (char*)malloc(sizeof(char) * infoLen);
+
+			glGetProgramInfoLog(shader_programme, infoLen, NULL, infoLog);
+			printf("Error linking program:\n%s\n", infoLog);
+
+			free(infoLog);
+		}
+
+		glDeleteProgram(shader_programme);
+		return false;
+	}
+
+
 	// Loop until the user closes the window
 	while (!glfwWindowShouldClose(window))
 	{
-		moveBox();  // animation
-
-		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
-
 		/* Render here */
-		//glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // depth test
 
-		//TODO: draw here
-		// Note: this is an old-style OpenGL
-		// In this example, we draw only one triangle
-		// this is for massive polygons
-		//glBegin(GL_TRIANGLES);
-
-		//for (int v = 0; v < 3; v++)
-		//{
-		//	glColor3f(color[v].r_, color[v].g_, color[v].b_);
-		//	//glColor3fv(color[v].data);
-		//	glVertex3f(vertex[v].x_, vertex[v].y_, vertex[v].z_);
-		//}
-		//glEnd();
-
-		// Modern c++ style : save time to send data from GPU to CPU
-		// 1. set my_array
-		//glEnableClientState(GL_COLOR_ARRAY);  
-		//glEnableClientState(GL_VERTEX_ARRAY);
-		//
-		//// 2. set the pointer of my_array
-		//glColorPointer(3, GL_FLOAT, 0, color);  
-		//glVertexPointer(3, GL_FLOAT, 0, vertex);
-		//// 3. draw array
-		//glDrawArrays(GL_TRIANGLES, 0, 9);  
-
-		/*glDisableClientState(GL_COLOR_ARRAY);
-		glDisableClientState(GL_VERTEX_ARRAY);*/
-
+		// We are using built-in shaders (we can not modify it)
 		// draw with glew function : default shading, send data to GPU
+		//glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+		//glEnableClientState(GL_VERTEX_ARRAY);  // send positions vertex data to GPU
+		//glVertexPointer(3, GL_FLOAT, 0, 0);  // Vector3D
 
-		glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-		glEnableClientState(GL_VERTEX_ARRAY);  // send positions vertex data to GPU
-		glVertexPointer(3, GL_FLOAT, 0, 0);  // Vector3D
-
-		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-		glEnableClientState(GL_COLOR_ARRAY);
-		glColorPointer(3, GL_FLOAT, 0, 0);
+		//glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+		//glEnableClientState(GL_COLOR_ARRAY);
+		//glColorPointer(3, GL_FLOAT, 0, 0);
 
 		// send connectivity information between vertices 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]);
+		/*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]);
 		glPolygonMode(GL_FRONT, GL_FILL);
 		glDrawElements(GL_QUADS, num_quads * 4, GL_UNSIGNED_INT, 0);
 
 		glDisableClientState(GL_COLOR_ARRAY);
-		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);*/
+
+		// we are going to use our custom shaders
+		/* shader version */
+		glUseProgram(shader_programme); // activate the shader
+
+		/* draw here */
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer
+		(
+			0,						// attribute 0. No particular reason for 0, but
+			3,						// size(x, y, z) position
+			GL_FLOAT,				// type
+			GL_FALSE,				// normalized?
+			0,						// stride
+			(void*)0				// array buffer offset
+		);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glDrawElements(GL_QUADS, num_quads * 4, GL_UNSIGNED_INT, 0);
 
 
 		// Swap front and back buffers
