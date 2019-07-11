@@ -8,6 +8,8 @@
 #include <cmath>
 #include <map>
 #include "Vector3D.h"
+#include "Vector4D.h"
+#include "Matrix4.h"
 #include <vector>
 #include <GL/GLU.h>
 
@@ -41,41 +43,84 @@ static void cursor_position_callback(GLFWwindow* window, double xpos, double ypo
 	std::cout << xpos << " " << ypos << std::endl;
 }
 
-bool isKeyPressedAndReleased(GLFWwindow *glfw_window, const int& key)
+const int num_vertices = 24;
+
+Vector4D<float> positions[num_vertices] =
 {
+	Vector4D<float>(0.0, 0.0, 0.5, 1.0),
+	Vector4D<float>(0.5, 0.0, 0.5, 1.0),
+	Vector4D<float>(0.5, 0.0, 0.0, 1.0),
+	Vector4D<float>(0.0, 0.0, 0.0, 1.0),
 
-	if (key_status.count(key) <= 0) key_status[key] == false;  // register key to map
+	Vector4D<float>(0.0, 0.0, 0.5, 1.0),
+	Vector4D<float>(0.5, 0.0, 0.5, 1.0),
+	Vector4D<float>(0.5, 0.5, 0.5, 1.0),
+	Vector4D<float>(0.0, 0.5, 0.5, 1.0),
 
-	if (glfwGetKey(glfw_window, key) == GLFW_RELEASE)
+	Vector4D<float>(0.0, 0.0, 0.5, 1.0),
+	Vector4D<float>(0.5, 0.0, 0.5, 1.0),
+	Vector4D<float>(0.5, 0.0, 0.0, 1.0),
+	Vector4D<float>(0.0, 0.0, 0.0, 1.0),
+
+	Vector4D<float>(0.5, 0.0, 0.5, 1.0),
+	Vector4D<float>(0.5, 0.0, 0.0, 1.0),
+	Vector4D<float>(0.5, 0.5, 0.0, 1.0),
+	Vector4D<float>(0.0, 0.5, 0.5, 1.0),
+
+	Vector4D<float>(0.0, 0.0, 0.0, 1.0),
+	Vector4D<float>(0.5, 0.0, 0.0, 1.0),
+	Vector4D<float>(0.5, 0.5, 0.0, 1.0),
+	Vector4D<float>(0.0, 0.5, 0.0, 1.0),
+
+	Vector4D<float>(0.0, 0.5, 0.5, 1.0),
+	Vector4D<float>(0.5, 0.5, 0.5, 1.0),
+	Vector4D<float>(0.5, 0.5, 0.0, 1.0),
+	Vector4D<float>(0.0, 0.5, 0.0, 1.0),
+};
+
+const int num_quads = 6;
+
+const GLbyte indices[num_quads * 4] = {
+	0, 1, 2, 3,
+	4, 5, 6, 7,
+	8, 9, 10, 11,
+	12, 13, 14, 15,
+	16, 17, 18, 19,
+	20, 21, 22, 23,
+};
+
+void moveBox()
+{
+	const float dx = -0.01;
+	const float dy = 0.0;
+	const float dz = 0.0;
+
+	Matrix4<float> tr;
+	tr.setRow(0, 1, 0, 0, dx);
+	tr.setRow(1, 0, 1, 0, dy);
+	tr.setRow(2, 0, 0, 1, dz);
+	tr.setRow(3, 0, 0, 0, 1);
+
+	for (int v = 0; v < num_vertices; v++)
 	{
-		if (key_status[key] == true)
-		{
-			key_status[key] == false;
-			return true;
-		}
-		else
-		{
-			key_status[key] = false;
-			return false;
-		}
-	}
-	else
-	{
-		key_status[key] = true;
-		return false;
+		/*positions[v].x_ += dx;
+		positions[v].y_ += dy;
+		positions[v].z_ += dz;*/
+
+		Vector4D<float> temp = positions[v];
+		tr.multiply(temp, positions[v]);
 	}
 }
-
 
 int main(void)
 {
 	GLFWwindow* window = nullptr;
 
-	// initialize the library
+	/* initialize the library */
 	if (!glfwInit())
 		return -1;
 
-	// create a windowed mode window and its OpenGL context
+	/* create a windowed mode window and its OpenGL context */
 	window = glfwCreateWindow(width_window, height_window, "Hello World", NULL, NULL);
 
 	if (!window)
@@ -101,50 +146,49 @@ int main(void)
 		return -1;
 	}
 
+	/* default color for display buffer */
+	glClearColor(1, 1, 1, 1); // white background
+
 	printf("%s\n", glGetString(GL_VERSION));
-
-	// default color for display buffer
-	glClearColor(174.0/255.0, 95.0/255.0, 95.0 / 255.0, 1);   
-	//glClearColor(1, 1, 1, 1); // white background
-
-	gluLookAt(0.6, 0.6, 0.6, 0.5, 0.5, 0.5, 0, 1, 0);  // it requires 9 parameters for 3-Dimension
 
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
-	const float aspect_ratio = (float)width / (float)height;  // 1.66, 1.9 TV display
-	glOrtho((double)-1 * aspect_ratio, (double)1 * aspect_ratio, -1, 1, -10.0, 10.0);
-
-
-	const Vector3D color[4] = {
+	//const float aspect_ratio = (float)width / (float)height;  // 1.66, 1.9 TV display
+	//glOrtho((double)-1 * aspect_ratio, (double)1 * aspect_ratio, -1, 1, -10.0, 10.0);
+	glOrtho(-1.2, 1.2, -1.2, 1.2, -10.0, 10.0);
+	// TODO: consider anisotropic view
+	gluLookAt(1.2, 0.8, 1.2, 0.5, 0.5, 0.5, 0, 1, 0);  // it requires 9 parameters for 3-Dimension
+	
+	//glLoadIdentity();
+	//gluLookAt(1, 1, 1, 0.5, 0.5, 0.5, 0, 1, 0);
+	//gluLookAt(0, 0, 0, 0.25, 0.25, 0.25, 0, 1, 0);
+	//glEnableVertexAttribArray(0);
+	//GLuint VertexArrayID;
+	//glGenVertexArrays(1, &VertexArrayID);
+	//glBindVertexArray(VertexArrayID);
+	
+	const Vector3D colors[6] = {
 						Vector3D(1.0, 0.0, 0.0),
 						Vector3D(0.0, 1.0, 0.0),
-						Vector3D(0.0, 0.0, 1.0),
-						Vector3D(0.0, 0.0, 1.0),
+						Vector3D(0.0, 1.0, 0.0),
+						Vector3D(0.0, 1.0, 0.0),
+						Vector3D(0.0, 1.0, 0.0),
+						Vector3D(0.0, 1.0, 0.0),
 						};
-
-	const Vector3D vertex[4] = {
-						Vector3D{ 0.0, 0.0, 0.0 },  
-						Vector3D{ 0.5, 0.0, 0.0 },	
-						Vector3D{ 0.25, 0.5, 0.0 },
-						Vector3D{ 0.5, 0.5, -0.5 }};	
 	
-	GLubyte indices[] = { 0, 1, 2, 1, 2, 3 };  // multiple triangle by using less vertices, in the field of topology theory
-
-	int num_vertices = 4;
-
 	GLuint vbo[3];  // unsigned array pointer of GPU memory, same as float* my_array[3];
 
 	glGenBuffers(3, vbo);  // 3: 3-array
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);  // bind to the buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_vertices * sizeof(Vector3D), color, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 3, vertex, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLubyte) * 6, indices, GL_STATIC_DRAW);  // 6: the number of indices
+	glBufferData(GL_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);  // 6: the number of indices
 
 	// NOTE: don't forget glDeleteBuffersARB(1, &vbo);
 
@@ -155,7 +199,12 @@ int main(void)
 	// Loop until the user closes the window
 	while (!glfwWindowShouldClose(window))
 	{
-		// render here
+		moveBox();  // animation
+
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+
+		/* Render here */
 		//glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // depth test
 
@@ -195,18 +244,15 @@ int main(void)
 
 		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, 0);
-
-		glDrawArrays(GL_TRIANGLES, 0, 6 * 3);
+		glVertexPointer(4, GL_FLOAT, 0, 0);  // Vector4D
 
 		// send connectivity information between vertices 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0);
+		glPolygonMode(GL_FRONT, GL_FILL);
+		glDrawElements(GL_QUADS, num_quads * 4, GL_UNSIGNED_BYTE, 0);
 
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
-
-		
 
 		// Swap front and back buffers
 		glfwSwapBuffers(window);
@@ -215,8 +261,6 @@ int main(void)
 		glfwPollEvents();
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-		//if (isKeyPressedAndReleased(window, GLFW_KEY_ESCAPE)) glfwTerminate();
 	}
 
 	glfwTerminate();

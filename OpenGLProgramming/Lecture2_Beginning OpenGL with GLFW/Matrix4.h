@@ -53,15 +53,15 @@ public:
 			}
 	}
 
-	friend std::stream& operator << (std::ostream& stream, const Matrix4<T>& matrix)
+	friend std::ostream& operator << (std::ostream& stream, const Matrix4<T>& matrix)
 	{
 		for(int r = 0; r < 4; r++)
 			for (int c = 0; c < 4; c++)
 			{
-				ostream << matrix.data[r][c] << " ";
+				stream << matrix.data[r][c] << " ";
 			}
-		ostream << std::endl;
+		stream << std::endl;
 
-		return ostream;
+		return stream;
 	}
 };

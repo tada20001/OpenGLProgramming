@@ -5,14 +5,15 @@ template<class T>
 class Vector4D
 {
 public:
-	union {
+	union 
+	{
 		struct { T x_, y_, z_, w_; };
 		T data[4];
 	};
 
+public:
 	Vector4D()
-		:x_(T()), y_(T()), z_(T(), w_(T())
-	{}
+		:x_(T()), y_(T()), z_(T()), w_(T()){}
 
 	Vector4D(const T& _x, const T& _y, const T& _z, const T& _w)
 		: x_(_x), y_(_y), z_(_z), w_(_w)
