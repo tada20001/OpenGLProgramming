@@ -15,7 +15,6 @@
 
 const int width_window = 640;
 const int height_window = 480;
-std::map<int, bool> key_status;
 
 float circle_center_x = 0.0f;
 float circle_center_y = 0.0f;
@@ -44,6 +43,17 @@ static void cursor_position_callback(GLFWwindow* window, double xpos, double ypo
 }
 
 const int num_vertices = 24;
+const int num_quads = 6;
+
+const Vector3D colors[num_vertices] =
+{
+	Vector3D(0, 0, 0.8), Vector3D(0, 0, 0.8), Vector3D(0, 0, 0.8), Vector3D(0, 0, 0.8),
+    Vector3D(1, 0, 0), Vector3D(1, 0, 0), Vector3D(1, 0, 0), Vector3D(1, 0, 0),
+	Vector3D(0, 1, 0), Vector3D(0, 1, 0), Vector3D(0, 1, 0), Vector3D(0, 1, 0),
+	Vector3D(1, 1, 0), Vector3D(1, 1, 0), Vector3D(1, 1, 0), Vector3D(1, 1, 0),
+	Vector3D(0.2, 0.2, 1), Vector3D(0.2, 0.2, 1), Vector3D(0.2, 0.2, 1), Vector3D(0.2, 0.2, 1),
+	Vector3D(1, 0, 1), Vector3D(1, 0, 1), Vector3D(1, 0, 1), Vector3D(1, 0, 1),
+};
 
 Vector4D<float> positions[num_vertices] =
 {
@@ -57,14 +67,14 @@ Vector4D<float> positions[num_vertices] =
 	Vector4D<float>(0.5, 0.5, 0.5, 1.0),
 	Vector4D<float>(0.0, 0.5, 0.5, 1.0),
 
-	Vector4D<float>(0.0, 0.0, 0.5, 1.0),
-	Vector4D<float>(0.5, 0.0, 0.5, 1.0),
-	Vector4D<float>(0.5, 0.0, 0.0, 1.0),
-	Vector4D<float>(0.0, 0.0, 0.0, 1.0),
-
 	Vector4D<float>(0.5, 0.0, 0.5, 1.0),
 	Vector4D<float>(0.5, 0.0, 0.0, 1.0),
 	Vector4D<float>(0.5, 0.5, 0.0, 1.0),
+	Vector4D<float>(0.5, 0.5, 0.5, 1.0),
+
+	Vector4D<float>(0.0, 0.0, 0.5, 1.0),
+	Vector4D<float>(0.0, 0.0, 0.0, 1.0),
+	Vector4D<float>(0.0, 0.5, 0.0, 1.0),
 	Vector4D<float>(0.0, 0.5, 0.5, 1.0),
 
 	Vector4D<float>(0.0, 0.0, 0.0, 1.0),
@@ -78,7 +88,6 @@ Vector4D<float> positions[num_vertices] =
 	Vector4D<float>(0.0, 0.5, 0.0, 1.0),
 };
 
-const int num_quads = 6;
 
 const GLbyte indices[num_quads * 4] = {
 	0, 1, 2, 3,
@@ -184,14 +193,14 @@ int main(void)
 	//glGenVertexArrays(1, &VertexArrayID);
 	//glBindVertexArray(VertexArrayID);
 	
-	const Vector3D colors[6] = {
+	/*const Vector3D colors[6] = {
 						Vector3D(0.0, 1.0, 0.0),
 						Vector3D(0.0, 1.0, 0.0),
 						Vector3D(0.0, 1.0, 0.0),
 						Vector3D(0.0, 1.0, 0.0),
 						Vector3D(0.0, 1.0, 0.0),
 						Vector3D(0.0, 1.0, 0.0),
-						};
+						};*/
 	
 	GLuint vbo[3];  // unsigned array pointer of GPU memory, same as float* my_array[3];
 
