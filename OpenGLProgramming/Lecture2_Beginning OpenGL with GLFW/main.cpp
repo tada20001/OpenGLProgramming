@@ -55,37 +55,37 @@ const Vector3D colors[num_vertices] =
 	Vector3D(1, 0, 1), Vector3D(1, 0, 1), Vector3D(1, 0, 1), Vector3D(1, 0, 1),
 };
 
-Vector4D<float> positions[num_vertices] =
+Vector3D positions[num_vertices] =
 {
-	Vector4D<float>(0.0, 0.0, 0.5, 1.0),
-	Vector4D<float>(0.5, 0.0, 0.5, 1.0),
-	Vector4D<float>(0.5, 0.0, 0.0, 1.0),
-	Vector4D<float>(0.0, 0.0, 0.0, 1.0),
+	Vector3D(0.0, 0.0, 0.5),
+	Vector3D(0.5, 0.0, 0.5),
+	Vector3D(0.5, 0.0, 0.0),
+	Vector3D(0.0, 0.0, 0.0),
 
-	Vector4D<float>(0.0, 0.0, 0.5, 1.0),
-	Vector4D<float>(0.5, 0.0, 0.5, 1.0),
-	Vector4D<float>(0.5, 0.5, 0.5, 1.0),
-	Vector4D<float>(0.0, 0.5, 0.5, 1.0),
+	Vector3D(0.0, 0.0, 0.5),
+	Vector3D(0.5, 0.0, 0.5),
+	Vector3D(0.5, 0.5, 0.5),
+	Vector3D(0.0, 0.5, 0.5),
 
-	Vector4D<float>(0.5, 0.0, 0.5, 1.0),
-	Vector4D<float>(0.5, 0.0, 0.0, 1.0),
-	Vector4D<float>(0.5, 0.5, 0.0, 1.0),
-	Vector4D<float>(0.5, 0.5, 0.5, 1.0),
+	Vector3D(0.5, 0.0, 0.5),
+	Vector3D(0.5, 0.0, 0.0),
+	Vector3D(0.5, 0.5, 0.0),
+	Vector3D(0.5, 0.5, 0.5),
 
-	Vector4D<float>(0.0, 0.0, 0.5, 1.0),
-	Vector4D<float>(0.0, 0.0, 0.0, 1.0),
-	Vector4D<float>(0.0, 0.5, 0.0, 1.0),
-	Vector4D<float>(0.0, 0.5, 0.5, 1.0),
+	Vector3D(0.0, 0.0, 0.5),
+	Vector3D(0.0, 0.0, 0.0),
+	Vector3D(0.0, 0.5, 0.0),
+	Vector3D(0.0, 0.5, 0.5),
 
-	Vector4D<float>(0.0, 0.0, 0.0, 1.0),
-	Vector4D<float>(0.5, 0.0, 0.0, 1.0),
-	Vector4D<float>(0.5, 0.5, 0.0, 1.0),
-	Vector4D<float>(0.0, 0.5, 0.0, 1.0),
+	Vector3D(0.0, 0.0, 0.0),
+	Vector3D(0.5, 0.0, 0.0),
+	Vector3D(0.5, 0.5, 0.0),
+	Vector3D(0.0, 0.5, 0.0),
 
-	Vector4D<float>(0.0, 0.5, 0.5, 1.0),
-	Vector4D<float>(0.5, 0.5, 0.5, 1.0),
-	Vector4D<float>(0.5, 0.5, 0.0, 1.0),
-	Vector4D<float>(0.0, 0.5, 0.0, 1.0),
+	Vector3D(0.0, 0.5, 0.5),
+	Vector3D(0.5, 0.5, 0.5),
+	Vector3D(0.5, 0.5, 0.0),
+	Vector3D(0.0, 0.5, 0.0),
 };
 
 
@@ -113,28 +113,28 @@ void moveBox()
 
 	const float theta = 1.0 / 360.0 * 2.0 * 3.141592;  // degree * 2 * pi : 1 degree in radian
 
-	Matrix4<float> rot;
+	//Matrix4<float> rot;
 	// rotation about x-axis
-	rot.setRow(0, 1, 0, 0, 0.0);
-	rot.setRow(1, 0, cos(theta), -sin(theta), 0.0);
-	rot.setRow(2, 0, sin(theta), cos(theta), 0.0);
-	rot.setRow(3, 0, 0, 0, 1);
+	//rot.setRow(0, 1, 0, 0, 0.0);
+	//rot.setRow(1, 0, cos(theta), -sin(theta), 0.0);
+	//rot.setRow(2, 0, sin(theta), cos(theta), 0.0);
+	//rot.setRow(3, 0, 0, 0, 1);
 
 	// rotation about y-axis
-	rot.setRow(0, cos(theta), 0, sin(theta), 0.0);
-	rot.setRow(1, 0, 1, 0, 0.0);
-	rot.setRow(2, -sin(theta), 0, cos(theta), 0.0);
-	rot.setRow(3, 0, 0, 0, 1);
+	//rot.setRow(0, cos(theta), 0, sin(theta), 0.0);
+	//rot.setRow(1, 0, 1, 0, 0.0);
+	//rot.setRow(2, -sin(theta), 0, cos(theta), 0.0);
+	//rot.setRow(3, 0, 0, 0, 1);
 
-	for (int v = 0; v < num_vertices; v++)
-	{
-		/*positions[v].x_ += dx;
-		positions[v].y_ += dy;
-		positions[v].z_ += dz;*/
+	//for (int v = 0; v < num_vertices; v++)
+	//{
+	//	/*positions[v].x_ += dx;
+	//	positions[v].y_ += dy;
+	//	positions[v].z_ += dz;*/
 
-		Vector4D<float> temp = positions[v];
-		rot.multiply(temp, positions[v]);
-	}
+	//	Vector4D<float> temp = positions[v];
+	//	rot.multiply(temp, positions[v]);
+	//}
 }
 
 int main(void)
@@ -269,7 +269,7 @@ int main(void)
 
 		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(4, GL_FLOAT, 0, 0);  // Vector4D
+		glVertexPointer(3, GL_FLOAT, 0, 0);  // Vector4D
 
 		// send connectivity information between vertices 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]);
