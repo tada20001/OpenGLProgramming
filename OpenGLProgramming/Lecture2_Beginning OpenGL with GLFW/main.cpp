@@ -89,7 +89,7 @@ Vector3D positions[num_vertices] =
 };
 
 
-const GLbyte indices[num_quads * 4] = {
+const unsigned short indices[num_quads * 4] = {
 	0, 1, 2, 3,
 	4, 5, 6, 7,
 	8, 9, 10, 11,
@@ -274,7 +274,7 @@ int main(void)
 		// send connectivity information between vertices 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]);
 		glPolygonMode(GL_FRONT, GL_FILL);
-		glDrawElements(GL_QUADS, num_quads * 4, GL_UNSIGNED_BYTE, 0);
+		glDrawElements(GL_QUADS, num_quads * 4, GL_UNSIGNED_SHORT, 0);
 
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
