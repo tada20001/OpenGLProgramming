@@ -146,11 +146,18 @@ int main(void)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLubyte) * 6, indices, GL_STATIC_DRAW);  // 6: the number of indices
 
+	// NOTE: don't forget glDeleteBuffersARB(1, &vbo);
+
+	// depth test
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+
 	// Loop until the user closes the window
 	while (!glfwWindowShouldClose(window))
 	{
 		// render here
-		glClear(GL_COLOR_BUFFER_BIT);
+		//glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // depth test
 
 		//TODO: draw here
 		// Note: this is an old-style OpenGL
