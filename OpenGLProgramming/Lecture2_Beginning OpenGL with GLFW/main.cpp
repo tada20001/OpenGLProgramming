@@ -89,7 +89,7 @@ Vector3D positions[num_vertices] =
 };
 
 
-const unsigned short indices[num_quads * 4] = {
+const unsigned int indices[num_quads * 4] = {
 	0, 1, 2, 3,
 	4, 5, 6, 7,
 	8, 9, 10, 11,
@@ -261,20 +261,20 @@ int main(void)
 		/*glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);*/
 
-		// draw with glew function
+		// draw with glew function : default shading, send data to GPU
 
 		glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-		glEnableClientState(GL_COLOR_ARRAY);
-		glColorPointer(3, GL_FLOAT, 0, 0);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_FLOAT, 0, 0);  // Vector3D
 
 		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, 0);  // Vector4D
+		glEnableClientState(GL_COLOR_ARRAY);
+		glColorPointer(3, GL_FLOAT, 0, 0);
 
 		// send connectivity information between vertices 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]);
 		glPolygonMode(GL_FRONT, GL_FILL);
-		glDrawElements(GL_QUADS, num_quads * 4, GL_UNSIGNED_SHORT, 0);
+		glDrawElements(GL_QUADS, num_quads * 4, GL_UNSIGNED_INT, 0);
 
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
